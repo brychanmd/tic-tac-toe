@@ -1,0 +1,53 @@
+html{
+	font-size: 24px;
+	font-family: Georgia, 'Times New Roman', Times, serif;
+	background-image: url(/assets/paper.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	min-height: 100%;
+}
+h1{
+	text-align: center;
+	color: rgb(65, 65, 65);
+}
+.board {
+	display: flex;
+	flex-direction: column;
+	width: 40vw;
+	height: 40vw;
+	max-width: 40vw;
+	margin: auto;
+}
+
+.row {
+	width: 100%;
+	flex-grow: 1;
+	background-color: transparent;
+	border-bottom: 5px rgb(65, 65, 65) solid;
+	display: flex;
+	flex-direction: row;
+}
+
+.row:last-child {
+	border: none;
+
+}
+  
+.cell {
+	flex-grow: 1;
+	border-right: 5px rgb(65, 65, 65) solid;
+	cursor: pointer;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+}
+
+.cell:last-child{
+	border: none;
+}
+
+
+
+
