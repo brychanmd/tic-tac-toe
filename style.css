@@ -48,6 +48,25 @@ h1{
 	border: none;
 }
 
+.cell.circle {
+	background-image: url(/assets/o.png);
+	cursor: not-allowed;
+}
+
+.cell.cross {
+	background-image: url(/assets/x.png);
+	cursor: not-allowed;
+}
+
+#reset {
+	display: flex;
+	justify-content: center;
+}
+
+#result {
+	display: none;
+	justify-content: center;
+}
 
 
 
