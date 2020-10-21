@@ -15,7 +15,19 @@ const gameBoard = (() => {
 	
 	var cells = document.querySelectorAll('.cell');
 	var resetBtn = document.querySelector('#reset');
-	var result = document.querySelector('#result');
+	var resultWindow = document.querySelector('#result');
+
+	var board = [
+		'', '', '', 
+		'', '', '', 
+		'', '', '',
+	];
+	var board2 = [
+		'circle', 'cross', 'circle', 
+		'cross', 'cross', 'cross', 
+		'cross', 'cross', 'circle',
+	];
+	
 	var winningCells = [
 		[0, 1, 2],
 		[3, 4, 5],
@@ -25,9 +37,9 @@ const gameBoard = (() => {
 		[2, 5, 8],
 		[0, 4, 8],
 		[2, 4, 6],
-	]
+	];
 
-	return {cells, resetBtn, result, winningCells};
+	return {cells, resetBtn, resultWindow, board, winningCells};
 
 })();
 
@@ -38,35 +50,55 @@ const displayController = (() => {
 
 		gameBoard.cells.forEach((value) => {
 			value.classList.remove('circle', 'cross'); // Remove tokens from the board.
-			value.addEventListener('click', () => {
-				value.classList.add('circle');
-			}, {once: true}); // Reset event listener on each cell.
+			gameBoard.board[value.id] = ''; // Replace board array with all empty values.
 
 		});
-		gameBoard.result.style.display = "none"; // Hide the results div. 
 		
+		gameBoard.resultWindow.style.display = "none"; // Hide the results div. 
 		
+	}
+
+	const placeMarker = ( index, player ) => {
+		gameBoard.cells[index].classList.add(player.symbol);
+		gameBoard.board.splice(index, 1, player.symbol);
+		console.log(gameBoard.board);
 	}
 
 	const displayResults = () => {
 
-		gameBoard.result.style.display = "flex";
+		gameBoard.resultWindow.style.display = "flex";
 
-	}
+	} // Calculate result and show results div.
 
 	gameBoard.resetBtn.addEventListener('click', () => {
 		resetBoard();
 	}); // Event listener for the reset button.
 
-	return {resetBoard, displayResults};
+	return {resetBoard, placeMarker, displayResults};
 
 })();
 
 // Game Logic Module
 const gameLogic = (() => {
 
-	let player1 = Player('Brychan', 'circle');
-	let player2 = Player('Ai', 'cross');
+	var player1 = Player('Brychan', 'circle');
+	var player2 = Player('Ai', 'cross');
+	var activePlayer = player1;
+
+	gameBoard.cells.forEach((value) => {
+		value.addEventListener('click', () => {
+
+			if (activePlayer == player1 && !gameBoard.board[value.id] ) {
+				displayController.placeMarker(value.id, player1);
+				activePlayer = player2;
+			} else if (activePlayer == player2 && !gameBoard.board[value.id] ) {
+				displayController.placeMarker(value.id, player2);
+				activePlayer = player1;
+			} 
+			
+		}); // Set event listener on each cell.
+		
+	});
 
 
 })();
