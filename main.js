@@ -22,11 +22,6 @@ const gameBoard = (() => {
 		'', '', '', 
 		'', '', '',
 	];
-	var board2 = [
-		'circle', 'cross', 'circle', 
-		'cross', 'cross', 'cross', 
-		'cross', 'cross', 'circle',
-	];
 	
 	var winningCells = [
 		[0, 1, 2],
