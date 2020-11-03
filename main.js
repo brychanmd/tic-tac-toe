@@ -54,9 +54,13 @@ const displayController = (() => {
 	}
 
 	const placeMarker = ( index, player ) => {
+
 		gameBoard.cells[index].classList.add(player.symbol);
 		gameBoard.board.splice(index, 1, player.symbol);
-		console.log(gameBoard.board);
+		
+		player.cells.push( parseInt(index) );
+		player.cells.sort();
+		
 	}
 
 	const displayResults = () => {
@@ -69,25 +73,28 @@ const displayController = (() => {
 		resetBoard();
 	}); // Event listener for the reset button.
 
-	return {resetBoard, placeMarker, displayResults};
+	return { placeMarker, displayResults};
 
 })();
 
 // Game Logic Module
 const gameLogic = (() => {
 
-	var player1 = Player('Brychan', 'circle');
-	var player2 = Player('Ai', 'cross');
+	var player1 = Player('Brychan', 'cross');
+	var player2 = Player('Ai', 'circle');
 	var activePlayer = player1;
+	var startingPlayer = player1;
 
 	gameBoard.cells.forEach((value) => {
 		value.addEventListener('click', () => {
 
 			if (activePlayer == player1 && !gameBoard.board[value.id] ) {
 				displayController.placeMarker(value.id, player1);
+				checkResults(player1);
 				activePlayer = player2;
 			} else if (activePlayer == player2 && !gameBoard.board[value.id] ) {
 				displayController.placeMarker(value.id, player2);
+				checkResults(player2);
 				activePlayer = player1;
 			} 
 			
@@ -95,7 +102,24 @@ const gameLogic = (() => {
 		
 	});
 
+	// Check Results
+	// check if current player has winning combination.
+	// check if all spots are taken with no winner.
+
+	const checkResults = ( currentPlayer ) => {
+		
+		gameBoard.winningCells.forEach( wc => {
+			let check = false;
+			check = wc.every( val => currentPlayer.cells.includes(val));
+			console.log(check);
+			if ( check ) break; 
+		} );
+	}
+	
+
+	// End Game
+	// display results, add extra game to player's winning tally, offer play again (reset) button.
 
 })();
 
-displayController.resetBoard();
+
