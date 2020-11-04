@@ -13,9 +13,11 @@ const Player = (name, symbol) => {
 // Game Board Module
 const gameBoard = (() => {
 	
+	var container = document.querySelector('.board');
 	var cells = document.querySelectorAll('.cell');
 	var resetBtn = document.querySelector('#reset');
-	var resultWindow = document.querySelector('#result');
+	var replayBtn = document.querySelector('#replay');
+	var resultWindow = document.querySelector('#overlay');
 
 	var board = [
 		'', '', '', 
@@ -34,7 +36,7 @@ const gameBoard = (() => {
 		[2, 4, 6],
 	];
 
-	return {cells, resetBtn, resultWindow, board, winningCells};
+	return {container, cells, resetBtn, replayBtn, resultWindow, board, winningCells};
 
 })();
 
@@ -46,11 +48,11 @@ const displayController = (() => {
 		gameBoard.cells.forEach((value) => {
 			value.classList.remove('circle', 'cross'); // Remove tokens from the board.
 			gameBoard.board[value.id] = ''; // Replace board array with all empty values.
+			gameBoard.container.classList.remove('disabled');
 
 		});
-		
+
 		gameBoard.resultWindow.style.display = "none"; // Hide the results div. 
-		
 	}
 
 	const placeMarker = ( index, player ) => {
@@ -59,21 +61,27 @@ const displayController = (() => {
 		gameBoard.board.splice(index, 1, player.symbol);
 		
 		player.cells.push( parseInt(index) );
-		player.cells.sort();
-		
+		player.cells.sort();	
 	}
 
-	const displayResults = () => {
+	const displayResults = ( roundWinner ) => {
 
-		gameBoard.resultWindow.style.display = "flex";
+		// Add logic to display round winner on the front end. 
+		gameBoard.container.classList.remove('disabled');
+		gameBoard.resultWindow.innerHTML = `
+		<div id="result">
+				<p>${roundWinner.name} Wins this round!</p>
+				<p>${gameLogic.player1.name}: ${gameLogic.player1.wins} wins</p>
+				<p>${gameLogic.player2.name}: ${gameLogic.player2.wins} wins</p>
+				<button type="reset">Replay?</button>
+		</div>
+		`;
+		gameBoard.resultWindow.style.display = "block";
+		
 
 	} // Calculate result and show results div.
 
-	gameBoard.resetBtn.addEventListener('click', () => {
-		resetBoard();
-	}); // Event listener for the reset button.
-
-	return { placeMarker, displayResults};
+	return { resetBoard, placeMarker, displayResults};
 
 })();
 
@@ -108,18 +116,31 @@ const gameLogic = (() => {
 
 	const checkResults = ( currentPlayer ) => {
 		
-		gameBoard.winningCells.forEach( wc => {
-			let check = false;
-			check = wc.every( val => currentPlayer.cells.includes(val));
-			console.log(check);
-			if ( check ) break; 
+		let check = gameBoard.winningCells.some( wc => { 
+			return wc.every( val => currentPlayer.cells.includes(val));
 		} );
+
+		if (check) {
+			currentPlayer.wins++;
+			displayController.displayResults( currentPlayer );
+		}
+
 	}
-	
 
-	// End Game
-	// display results, add extra game to player's winning tally, offer play again (reset) button.
+	const resetGame = () => {
+		player1.cells = [];
+		player2.cells = [];
+		displayController.resetBoard();
+	}
 
+	gameBoard.resetBtn.addEventListener('click', () => {
+		resetGame();
+	}); // Event listener for the reset button.
+	gameBoard.replayBtn.addEventListener('click', () => {
+		resetGame();
+	}); // Event listener for the reset button.
+
+	return {player1, player2};
 })();
 
 
