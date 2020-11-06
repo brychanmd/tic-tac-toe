@@ -43,6 +43,8 @@ const gameBoard = (() => {
 // Display Controller Module
 const displayController = (() => {
 
+	var bleep = new Audio('/assets/click.mp3');
+
 	const resetBoard = () => {
 
 		gameBoard.cells.forEach((value) => {
@@ -59,22 +61,21 @@ const displayController = (() => {
 
 		gameBoard.cells[index].classList.add(player.symbol);
 		gameBoard.board.splice(index, 1, player.symbol);
+		bleep.currentTime = 0
+		bleep.play();
 		
 		player.cells.push( parseInt(index) );
-		player.cells.sort();	
+		player.cells.sort();
 	}
 
 	const displayResults = ( roundWinner ) => {
 
 		// Add logic to display round winner on the front end. 
-		gameBoard.container.classList.remove('disabled');
-		gameBoard.resultWindow.innerHTML = `
-		<div id="result">
-				<p>${roundWinner.name} Wins this round!</p>
+		gameBoard.container.classList.add('disabled');
+		document.getElementById('result').innerHTML = `
+				<p>${ roundWinner ? roundWinner.name +  ' Wins!' : 'It\'s a tie!' }</p>
 				<p>${gameLogic.player1.name}: ${gameLogic.player1.wins} wins</p>
 				<p>${gameLogic.player2.name}: ${gameLogic.player2.wins} wins</p>
-				<button type="reset">Replay?</button>
-		</div>
 		`;
 		gameBoard.resultWindow.style.display = "block";
 		
@@ -92,6 +93,7 @@ const gameLogic = (() => {
 	var player2 = Player('Ai', 'circle');
 	var activePlayer = player1;
 	var startingPlayer = player1;
+	let moves = 0;
 
 	gameBoard.cells.forEach((value) => {
 		value.addEventListener('click', () => {
@@ -110,10 +112,6 @@ const gameLogic = (() => {
 		
 	});
 
-	// Check Results
-	// check if current player has winning combination.
-	// check if all spots are taken with no winner.
-
 	const checkResults = ( currentPlayer ) => {
 		
 		let check = gameBoard.winningCells.some( wc => { 
@@ -123,6 +121,11 @@ const gameLogic = (() => {
 		if (check) {
 			currentPlayer.wins++;
 			displayController.displayResults( currentPlayer );
+			moves = 0;
+		}
+		moves++;
+		if (moves === 9) {
+			displayController.displayResults( null );
 		}
 
 	}

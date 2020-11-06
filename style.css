@@ -66,14 +66,13 @@ h1{
 #overlay{
 	position: fixed;
 	display: none;
-	width: 50%;
-	min-height: 50%;
-	top: 25%;
-	left: 25%;
-	right: 25%;
-	bottom: 25%;
-	border-radius: 5px;
-	background-color: rgba(0,0,0,0.5); 
+	width: 100%;
+	min-height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.7); 
   	z-index: 2; 
 }
 
@@ -85,6 +84,12 @@ h1{
 	text-align: center;
 	font-size: 40px;
 	color: white;
+	margin-top: 20vh;
+	
+}
+.replay{
+	display: flex;
+	justify-content: center;
 }
 .disabled{
 	pointer-events: none; 
