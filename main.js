@@ -89,10 +89,10 @@ const displayController = (() => {
 // Game Logic Module
 const gameLogic = (() => {
 
-	var player1 = Player('Brychan', 'cross');
-	var player2 = Player('Ai', 'circle');
-	var activePlayer = player1;
+	var player1 = Player('Player 1', 'cross');
+	var player2 = Player('Player 2', 'circle');
 	var startingPlayer = player1;
+	var activePlayer = startingPlayer;
 	let moves = 0;
 
 	gameBoard.cells.forEach((value) => {
@@ -134,12 +134,14 @@ const gameLogic = (() => {
 		player1.cells = [];
 		player2.cells = [];
 		displayController.resetBoard();
+		activePlayer = startingPlayer;
 	}
 
 	gameBoard.resetBtn.addEventListener('click', () => {
 		resetGame();
 	}); // Event listener for the reset button.
 	gameBoard.replayBtn.addEventListener('click', () => {
+		startingPlayer === player1 ? startingPlayer = player2 : startingPlayer = player1; //  Take turns starting new game.
 		resetGame();
 	}); // Event listener for the reset button.
 

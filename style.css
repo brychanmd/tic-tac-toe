@@ -1,7 +1,7 @@
 html{
 	font-size: 24px;
 	font-family: Georgia, 'Times New Roman', Times, serif;
-	background-image: url(/assets/paper.jpg);
+	background-image: url("/assets/paper.jpg");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
@@ -49,12 +49,12 @@ h1{
 }
 
 .cell.circle {
-	background-image: url(/assets/o.png);
+	background-image: url("/assets/o.png");
 	cursor: not-allowed;
 }
 
 .cell.cross {
-	background-image: url(/assets/x.png);
+	background-image: url("/assets/x.png");
 	cursor: not-allowed;
 }
 
