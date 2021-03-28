@@ -1,18 +1,21 @@
 html{
 	font-size: 24px;
 	font-family: Georgia, 'Times New Roman', Times, serif;
-	background-image: url("/assets/paper.jpg");
+	background-image: url("./assets/paper.jpg");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
 	min-height: 100%;
 }
-h1{
+h1, h2 {
 	text-align: center;
 	color: rgb(65, 65, 65);
 }
+h2 {
+	font-size: 20px;
+}
 .board {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	width: 40vw;
 	height: 40vw;
@@ -49,17 +52,23 @@ h1{
 }
 
 .cell.circle {
-	background-image: url("/assets/o.png");
+	background-image: url("./assets/o.png");
 	cursor: not-allowed;
 }
 
 .cell.cross {
-	background-image: url("/assets/x.png");
+	background-image: url("./assets/x.png");
 	cursor: not-allowed;
 }
-
-#reset {
+#menu {
 	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+	padding: 5px;
+}
+#reset {
+	display: none;
 	justify-content: center;
 }
 
@@ -94,5 +103,10 @@ h1{
 .disabled{
 	pointer-events: none; 
 }
-
+form{
+	padding: 10px;
+}
+form div{
+	margin-bottom: 5px;
+}
 
