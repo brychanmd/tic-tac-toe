@@ -10,6 +10,15 @@ const Player = (name, symbol) => {
 	return {name, symbol, cells, wins};
 };
 
+// Game Menu Module
+const gameMenu = (() => {
+
+	var container = document.querySelector('.menu');
+
+	return {container};
+
+})();
+
 // Game Board Module
 const gameBoard = (() => {
 	
@@ -43,7 +52,7 @@ const gameBoard = (() => {
 // Display Controller Module
 const displayController = (() => {
 
-	var bleep = new Audio('/assets/click.mp3');
+	var bleep = new Audio('./assets/click.mp3');
 
 	const resetBoard = () => {
 
@@ -89,11 +98,14 @@ const displayController = (() => {
 // Game Logic Module
 const gameLogic = (() => {
 
+	var onePlayerMode = false;
 	var player1 = Player('Player 1', 'cross');
 	var player2 = Player('Player 2', 'circle');
+	
 	var startingPlayer = player1;
 	var activePlayer = startingPlayer;
 	let moves = 0;
+
 
 	gameBoard.cells.forEach((value) => {
 		value.addEventListener('click', () => {
