@@ -13,9 +13,27 @@ const Player = (name, symbol) => {
 // Game Menu Module
 const gameMenu = (() => {
 
-	var container = document.querySelector('.menu');
+	const container = document.querySelector('#menu');
+    const radios = container.querySelectorAll('input[name="mode"]');
+    const p2Wrapper = container.querySelector('#p2-wrapper');;
 
-	return {container};
+    const toggleP2wrapper = ( modeVal ) => { modeVal === '1player' ? p2Wrapper.style.display = 'none' : p2Wrapper.style.display = 'block'; }
+    
+    let modeVal = '1player';
+
+    toggleP2wrapper( modeVal );
+    
+    radios.forEach(radio => {
+        radio.addEventListener('click', function () {
+            modeVal = radio.value;
+            toggleP2wrapper( modeVal );
+        });
+    });
+
+    let name1 = 'Player 1';
+    let name2 = 'Player 2';
+
+	return {container, modeVal, name1, name2};
 
 })();
 
