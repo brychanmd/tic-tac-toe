@@ -10,32 +10,6 @@ const Player = (name, symbol) => {
 	return {name, symbol, cells, wins};
 };
 
-// Game Menu Module
-const gameMenu = (() => {
-
-	const container = document.querySelector('#menu');
-    const radios = container.querySelectorAll('input[name="mode"]');
-    const p2Wrapper = container.querySelector('#p2-wrapper');;
-
-    const toggleP2wrapper = ( modeVal ) => { modeVal === '1player' ? p2Wrapper.style.display = 'none' : p2Wrapper.style.display = 'block'; }
-    
-    let modeVal = '1player';
-
-    toggleP2wrapper( modeVal );
-    
-    radios.forEach(radio => {
-        radio.addEventListener('click', function () {
-            modeVal = radio.value;
-            toggleP2wrapper( modeVal );
-        });
-    });
-
-    let name1 = 'Player 1';
-    let name2 = 'Player 2';
-
-	return {container, modeVal, name1, name2};
-
-})();
 
 // Game Board Module
 const gameBoard = (() => {
@@ -124,23 +98,34 @@ const gameLogic = (() => {
 	var activePlayer = startingPlayer;
 	let moves = 0;
 
+    const startGame = ( mode, p1name, p2name ) => {
 
-	gameBoard.cells.forEach((value) => {
-		value.addEventListener('click', () => {
+        gameBoard.container.style.display = 'flex';
 
-			if (activePlayer == player1 && !gameBoard.board[value.id] ) {
-				displayController.placeMarker(value.id, player1);
-				checkResults(player1);
-				activePlayer = player2;
-			} else if (activePlayer == player2 && !gameBoard.board[value.id] ) {
-				displayController.placeMarker(value.id, player2);
-				checkResults(player2);
-				activePlayer = player1;
-			} 
-			
-		}); // Set event listener on each cell.
-		
-	});
+        if ( '1player' === mode ) {
+
+        } else if ( '2player' === mode ) {
+
+            gameBoard.cells.forEach((value) => {
+                value.addEventListener('click', () => {
+        
+                    if (activePlayer == player1 && !gameBoard.board[value.id] ) {
+                        displayController.placeMarker(value.id, player1);
+                        checkResults(player1);
+                        activePlayer = player2;
+                    } else if (activePlayer == player2 && !gameBoard.board[value.id] ) {
+                        displayController.placeMarker(value.id, player2);
+                        checkResults(player2);
+                        activePlayer = player1;
+                    } 
+                    
+                }); // Set event listener on each cell.
+                
+            });
+
+        }
+
+    }
 
 	const checkResults = ( currentPlayer ) => {
 		
@@ -175,7 +160,49 @@ const gameLogic = (() => {
 		resetGame();
 	}); // Event listener for the reset button.
 
-	return {player1, player2};
+	return { startGame, player1, player2};
 })();
 
+// Game Menu Module
+const gameMenu = (() => {
 
+	const container = document.querySelector('#menu');
+    const radios = container.querySelectorAll('input[name="mode"]');
+    const p1Wrapper = container.querySelector('#p1-wrapper');
+    const p2Wrapper = container.querySelector('#p2-wrapper');
+    const submitBtn = container.querySelector('input[type="submit"]');
+    
+    let mode = '1player';
+    let name1;
+    let name2;
+
+    const toggleP2wrapper = ( mode ) => { 
+        mode === '1player' ? p2Wrapper.style.display = 'none' : p2Wrapper.style.display = 'block';
+    }
+
+    radios.forEach(radio => {
+        radio.addEventListener('click', function () {
+            mode = radio.value;
+            toggleP2wrapper( mode );
+        });
+    });
+
+    toggleP2wrapper( mode );
+
+    submitBtn.addEventListener('click', function ( event ) {
+        event.preventDefault();
+
+        p1Wrapper.querySelector('input').value ? name1 = p1Wrapper.querySelector('input').value : name1 = 'Player 1';
+        p1Wrapper.querySelector('input').value ? name2 = p2Wrapper.querySelector('input').value : name2 = 'Player 2';
+
+        container.style.display = 'none';
+        gameLogic.startGame( mode, name1, name2 );
+
+    });
+
+
+})();
+
+// listen for submit button
+
+// start game
