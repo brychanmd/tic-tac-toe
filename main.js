@@ -4,10 +4,9 @@
 const Player = (name, symbol) => {
 	var name = name;
 	var symbol = symbol;
-	var cells = [];
 	var wins = 0;
 
-	return {name, symbol, cells, wins};
+	return {name, symbol, wins};
 };
 
 
@@ -25,19 +24,8 @@ const gameBoard = (() => {
 		'', '', '', 
 		'', '', '',
 	];
-	
-	var winningCells = [
-		[0, 1, 2],
-		[3, 4, 5],
-		[6, 7, 8],
-		[0, 3, 6],
-		[1, 4, 7],
-		[2, 5, 8],
-		[0, 4, 8],
-		[2, 4, 6],
-	];
 
-	return {container, cells, resetBtn, replayBtn, resultWindow, board, winningCells};
+	return {container, cells, resetBtn, replayBtn, resultWindow, board };
 
 })();
 
@@ -67,6 +55,8 @@ const displayController = (() => {
 		
 		player.cells.push( parseInt(index) );
 		player.cells.sort();
+
+        // Also remove event listener?
 	}
 
 	const displayResults = ( roundWinner ) => {
@@ -98,54 +88,126 @@ const gameLogic = (() => {
 	var activePlayer = startingPlayer;
 	let moves = 0;
 
-    const startGame = ( mode, p1name, p2name ) => {
+    const winningCells = [
+		[0, 1, 2],
+		[3, 4, 5],
+		[6, 7, 8],
+		[0, 3, 6],
+		[1, 4, 7],
+		[2, 5, 8],
+		[0, 4, 8],
+		[2, 4, 6],
+	];
 
-        gameBoard.container.style.display = 'flex';
-
+    const setupGame = ( mode, p1name, p2name ) => {
         if ( '1player' === mode ) {
+            onePlayerMode = true
+            player1.name = p1name;
+            player2.name = p2name;
+        } else {
+            onePlayerMode = false;
+            player1.name = p1name;
+            player2.name = 'AI';
+        }
+        startGame();
+    }
 
-        } else if ( '2player' === mode ) {
+    const startGame = () => {
+
+        gameBoard.container.style.display = 'flex';        
+
+        if ( onePlayerMode ) {
+
+            if ( startingPlayer === player2 ) {
+                aiMove();
+            }
 
             gameBoard.cells.forEach((value) => {
                 value.addEventListener('click', () => {
         
-                    if (activePlayer == player1 && !gameBoard.board[value.id] ) {
-                        displayController.placeMarker(value.id, player1);
-                        checkResults(player1);
-                        activePlayer = player2;
-                    } else if (activePlayer == player2 && !gameBoard.board[value.id] ) {
-                        displayController.placeMarker(value.id, player2);
-                        checkResults(player2);
-                        activePlayer = player1;
-                    } 
+                    playerMove( value.id );
+                    
+                }); // Set event listener on each cell.
+                
+            });
+
+        } else if ( !onePlayerMode ) {
+
+            gameBoard.cells.forEach((value) => {
+                value.addEventListener('click', () => {
+        
+                    playerMove( value.id );
                     
                 }); // Set event listener on each cell.
                 
             });
 
         }
-
     }
 
-	const checkResults = ( currentPlayer ) => {
+    const playerMove = ( cell ) => {
+
+        // Place Marker.
+        displayController.placeMarker(cell, activePlayer);
+
+        // Check results after current move.
+        if ( checkResults( gameBoard.board, activePlayer ) ) {
+            // Winner!
+            displayController.displayResults( activePlayer );
+       } else if (9 >= moves) {
+            // Draw :/
+            displayController.displayResults( null )
+       } else {
+            // Switch active player and move on..
+            moves++;
+            activePlayer == player1 ? activePlayer = player2 : activePlayer = player1;
+            onePlayerMode ? aiMove() : ''; // Trigger AI move if it's single player mode.
+       }
+    }
+
+    const aiMove = () => {
+        
+        // Find best move, make move.
+        let bestMove = findBestMove( gameBoard.board, player2, 0 );
+        displayController.placeMarker( bestMove, player2 );
+
+        // Check results after move.
+        if ( checkResults( gameBoard.board, player2 ) ) {
+            // Winner!
+            displayController.displayResults( player2 );
+        } else if (9 >= moves) {
+            // Draw :/
+            displayController.displayResults( null )
+        } else {
+            // Move on..
+            moves++;
+            activePlayer = player1;
+        }
+    }
+
+    // Uses the minimax algorithm to find the best move.
+    const findBestMove = ( gameBoard, player, depth ) => {
+        
+
+        let currentBoardState = [...gameBoard];
+
+        
+
+        
+    }
+
+	const checkResults = ( boardstate, currentPlayer ) => {
 		
-		let check = gameBoard.winningCells.some( wc => { 
-			return wc.every( val => currentPlayer.cells.includes(val));
+        let check = winningCells.some( wc => { 
+            return wc.every( val => boardstate[val] === currentPlayer.symbol );
 		} );
 
-		if (check) {
-			currentPlayer.wins++;
-			displayController.displayResults( currentPlayer );
-			moves = 0;
-		}
-		moves++;
-		if (moves === 9) {
-			displayController.displayResults( null );
-		}
+        return check;
 
 	}
 
 	const resetGame = () => {
+        moves = 0;
 		player1.cells = [];
 		player2.cells = [];
 		displayController.resetBoard();
@@ -160,7 +222,7 @@ const gameLogic = (() => {
 		resetGame();
 	}); // Event listener for the reset button.
 
-	return { startGame, player1, player2};
+	return { setupGame, player1, player2};
 })();
 
 // Game Menu Module
@@ -196,7 +258,8 @@ const gameMenu = (() => {
         p1Wrapper.querySelector('input').value ? name2 = p2Wrapper.querySelector('input').value : name2 = 'Player 2';
 
         container.style.display = 'none';
-        gameLogic.startGame( mode, name1, name2 );
+        
+        gameLogic.setupGame( mode, name1, name2 );
 
     });
 
