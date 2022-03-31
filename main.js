@@ -40,7 +40,6 @@ const displayController = (() => {
 			value.classList.remove('circle', 'cross'); // Remove tokens from the board.
 			gameBoard.board[value.id] = ''; // Replace board array with all empty values.
 			gameBoard.container.classList.remove('disabled');
-            value.removeEventListener('click', () => {});
 
 		});
 
@@ -102,12 +101,20 @@ const gameLogic = (() => {
         if ( '1player' === mode ) {
             onePlayerMode = true
             player1.name = p1name;
-            player2.name = p2name;
+            player2.name = 'AI';
         } else {
             onePlayerMode = false;
             player1.name = p1name;
-            player2.name = 'AI';
+            player2.name = p2name;
         }
+        gameBoard.cells.forEach((value) => {
+            value.addEventListener('click', () => {
+    
+                playerMove( value.id );
+                
+            }); // Set event listener on each cell.
+            
+        });
         startGame();
     }
 
@@ -117,37 +124,14 @@ const gameLogic = (() => {
 
         if ( onePlayerMode ) {
 
-            console.log( gameBoard.board );
             if ( startingPlayer === player2 ) {
                 aiMove();
             }
-
-            gameBoard.cells.forEach((value) => {
-                value.addEventListener('click', () => {
-        
-                    playerMove( value.id );
-                    
-                }); // Set event listener on each cell.
-                
-            });
-
-        } else if ( !onePlayerMode ) {
-
-            gameBoard.cells.forEach((value) => {
-                value.addEventListener('click', () => {
-        
-                    playerMove( value.id );
-                    
-                }); // Set event listener on each cell.
-                
-            });
 
         }
     }
 
     const playerMove = ( cell ) => {
-
-        console.log(activePlayer);
 
         // Place Marker.
         displayController.placeMarker(cell, activePlayer);
@@ -157,16 +141,19 @@ const gameLogic = (() => {
         // Check results after current move.
         if ( activePlayer.symbol === result ) {
             // Winner!
+            activePlayer.wins++;
             displayController.displayResults( activePlayer );
        } else if ( 'draw' === result ) {
             // Draw :/
             displayController.displayResults( null )
        } else {
-            setTimeout(() => {
-                // Switch active player and move on..
-                activePlayer == player1 ? activePlayer = player2 : activePlayer = player1;
-                onePlayerMode ? aiMove() : ''; // Trigger AI move if it's single player mode.
-            }, 800);
+           // Switch active player and move on..
+           activePlayer == player1 ? activePlayer = player2 : activePlayer = player1;
+            if ( onePlayerMode ) {
+                setTimeout(() => {
+                    aiMove(); // Trigger AI move if it's single player mode.
+                }, 500);
+            }
        }
     }
 
@@ -181,6 +168,7 @@ const gameLogic = (() => {
         // Check results after move.
         if ( player2.symbol === result ) {
             // Winner!
+            player2.wins++;
             displayController.displayResults( player2 );
         } else if ( 'draw' === result ) {
             // Draw :/
@@ -353,16 +341,18 @@ const gameMenu = (() => {
 
 	const container = document.querySelector('#menu');
     const radios = container.querySelectorAll('input[name="mode"]');
-    const p1Wrapper = container.querySelector('#p1-wrapper');
-    const p2Wrapper = container.querySelector('#p2-wrapper');
     const submitBtn = container.querySelector('input[type="submit"]');
+
+    const p2elems = container.querySelectorAll('.user2');
     
     let mode = '1player';
     let name1;
     let name2;
 
     const toggleP2wrapper = ( mode ) => { 
-        mode === '1player' ? p2Wrapper.style.display = 'none' : p2Wrapper.style.display = 'block';
+        p2elems.forEach( elem => {
+            mode === '1player' ? elem.style.display = 'none' : elem.style.display = 'block';
+        } );
     }
 
     radios.forEach(radio => {
@@ -377,8 +367,8 @@ const gameMenu = (() => {
     submitBtn.addEventListener('click', function ( event ) {
         event.preventDefault();
 
-        p1Wrapper.querySelector('input').value ? name1 = p1Wrapper.querySelector('input').value : name1 = 'Player 1';
-        p1Wrapper.querySelector('input').value ? name2 = p2Wrapper.querySelector('input').value : name2 = 'Player 2';
+        container.querySelector('#player-1').value ? name1 = container.querySelector('#player-1').value : name1 = 'Player 1';
+        container.querySelector('#player-2').value ? name2 = container.querySelector('#player-2').value : name2 = 'Player 2';
 
         container.style.display = 'none';
         

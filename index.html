@@ -10,28 +10,28 @@
 		<div class="header">
 			<h1>Tic Tac Toe</h1>
 		</div>
-		<div id="menu">
-			<h2 class="choices">Game modes</h2>
-			<form class="names">
-				<div class="mode-checkboxes">
-					<input type="radio" name="mode" id="1p-mode" value="1player" checked>
-					<label for="1p-mode">1 Player (AI) </label>
-					<br>
+        <div class="menu-wrapper">
+            <div id="menu">
+                <h2 class="choices">Game configuration</h2>
+                <form>
+                    
+                    <label for="1p-mode">1 Player (AI) </label>
+                    <input type="radio" name="mode" id="1p-mode" value="1player" checked>
+                    <label for="2p-mode">2 Player </label>
                     <input type="radio" name="mode" id="2p-mode" value="2player">
-					<label for="2p-mode">2 Player </label>
-				</div>
-				<div id="p1-wrapper">
-					<label for="player-1">Player 1: </label>
-					<input class="user" type="text" id="player-1" placeholder="Name (Optional)" name="player-1" maxlength="15">
-				</div>
-                <div id="p2-wrapper">
-					<label for="player-2">Player 2: </label>
-					<input class="user" type="text" id="player-2" placeholder="Name (Optional)" name="player-2" maxlength="15">
-				</div>
-				<input type="submit" value="Submit">
-
-			</form>
-		</div>
+                
+                
+                    <label class="user user1" for="player-1">Player 1:</label>
+                    <input class="user user1" type="text" id="player-1" placeholder="Name (Optional)" name="player-1" maxlength="15">
+                
+                    <label class="user user2" for="player-2">Player 2:</label>
+                    <input class="user user2" type="text" id="player-2" placeholder="Name (Optional)" name="player-2" maxlength="15">
+                    
+                    <input class="submit-btn" type="submit" value="Submit">
+    
+                </form>
+            </div>
+        </div>
 		<div class="board">
 			<div class="row">
 				<div id="0" class="cell"></div>
